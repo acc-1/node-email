@@ -35,39 +35,40 @@ app.get('/', (req, res)=>{
     res.send('funciona correctamente');
 })
 
-app.post('/datos', (req, res)=>{
-    let datos= req.body
-     datosArr = [datos]
-    res.send(JSON.stringify('guardada bb'))
-    console.log(datosArr)
-    
-    const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
+app.post('/datos', async (req, res) => {
+  let datos = req.body;
+  datosArr = [datos];
 
-(async function () {
-  const { data, error } = await resend.emails.send({
-    from: 'Pre-Inscripciones Club Ciclon<onboarding@resend.dev>',
-    to: ['agusalt2004@hotmail.com'],
-    subject: 'NUEVA PRE-INSCRIPCION',
-    html: `  <p>
-    <strong>NOMBRE:</strong> ${datosArr[0].nombre}<br><br>
-    <strong>APELLIDO:</strong> ${datosArr[0].apellido}<br><br>
-    <strong>SEXO:</strong> ${datosArr[0].sexo}<br><br>
-    <strong>EDAD:</strong> ${datosArr[0].edad}<br><br>
-    <strong>TIPO DE CARRERA:</strong> ${datosArr[0].carrera}<br><br>
-    <strong>TELEFONO:</strong> ${datosArr[0].telefono}<br><br>
-    <strong>EMAIL:</strong> ${datosArr[0].email}<br><br>
-  </p>
-    `,
-  });
+  const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
 
-  if (error) {
-    return console.error({ error });
+  try {
+      const { data, error } = await resend.emails.send({
+          from: 'Pre-Inscripciones Club Ciclon<onboarding@resend.dev>',
+          to: ['agusalt2004@hotmail.com'],
+          subject: 'NUEVA PRE-INSCRIPCION',
+          html: `<p>
+              <strong>NOMBRE:</strong> ${datosArr[0].nombre}<br><br>
+              <strong>APELLIDO:</strong> ${datosArr[0].apellido}<br><br>
+              <strong>SEXO:</strong> ${datosArr[0].sexo}<br><br>
+              <strong>EDAD:</strong> ${datosArr[0].edad}<br><br>
+              <strong>TIPO DE CARRERA:</strong> ${datosArr[0].carrera}<br><br>
+              <strong>TELEFONO:</strong> ${datosArr[0].telefono}<br><br>
+              <strong>EMAIL:</strong> ${datosArr[0].email}<br><br>
+          </p>`,
+      });
+
+      if (error) {
+          console.error({ error });
+          res.status(500).send('Error al enviar el correo electrónico.');
+      } else {
+          console.log('Correo electrónico enviado correctamente:', data);
+          res.send('guardada bb');
+      }
+  } catch (err) {
+      console.error('Error al enviar el correo electrónico:', err);
+      res.status(500).send('Error al enviar el correo electrónico.');
   }
-
-  console.log({ data });
-})();
-
-})
+});
 
 app.listen(port, ()=>{
     console.log(`estoy ejecutandome en http://localhost:${port}`)
