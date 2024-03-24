@@ -29,7 +29,7 @@ app.use(cors());
 
 
 
-app.get('/datos', (req, res)=>{
+app.get('/', (req, res)=>{
     res.send('funciona correctamente');
 })
 
