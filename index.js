@@ -59,7 +59,7 @@ app.post('/datos', async (req, res) => {
 
       if (error) {
           console.error({ error });
-          res.status(500).send('Error al enviar el correo electrónico.');
+          res.status(500).send('Error  al enviar el correo electrónico.');
       } else {
           console.log('Correo electrónico enviado correctamente:', data);
           res.send(); // Envía una respuesta vacía
