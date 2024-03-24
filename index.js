@@ -24,7 +24,7 @@ app.use(express.json({
 }))
 
 app.use(cors({
-    origin: 'https://inscripciones-club-ciclon.netlify.app/home'
+    origin: 'https://inscripciones-club-ciclon.netlify.app'
 }));
 // #endregion
 
