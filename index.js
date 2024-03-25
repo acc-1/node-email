@@ -47,13 +47,17 @@ app.post('/datos', async (req, res) => {
           to: ['agusalt2004@hotmail.com'],
           subject: 'NUEVA PRE-INSCRIPCION',
           html: `<p>
-              <strong>NOMBRE:</strong> ${datosArr[0].nombre}<br><br>
-              <strong>APELLIDO:</strong> ${datosArr[0].apellido}<br><br>
-              <strong>SEXO:</strong> ${datosArr[0].sexo}<br><br>
-              <strong>EDAD:</strong> ${datosArr[0].edad}<br><br>
-              <strong>TIPO DE CARRERA:</strong> ${datosArr[0].carrera}<br><br>
-              <strong>TELEFONO:</strong> ${datosArr[0].telefono}<br><br>
-              <strong>EMAIL:</strong> ${datosArr[0].email}<br><br>
+          <strong>NOMBRE:</strong> ${datosArr[0].nombre}<br><br>
+          <strong>APELLIDO:</strong> ${datosArr[0].apellido}<br><br>
+          <strong>SEXO:</strong> ${datosArr[0].sexo}<br><br>
+          <strong>FECHA DE NACIMIENTO:</strong> ${datosArr[0].fecha_nacimiento}<br><br>
+          <strong>DOCUMENTO:</strong> ${datosArr[0].documento}<br><br>
+          <strong>CIUDAD:</strong> ${datosArr[0].ciudad}<br><br>
+          <strong>DOMICILIO:</strong> ${datosArr[0].domicilio}<br><br>
+          <strong>EDAD:</strong> ${datosArr[0].edad}<br><br>
+          <strong>TIPO DE CARRERA:</strong> ${datosArr[0].carrera}<br><br>
+          <strong>TELEFONO:</strong> ${datosArr[0].telefono}<br><br>
+          <strong>EMAIL:</strong> ${datosArr[0].email}<br><br>
           </p>`,
       });
 
