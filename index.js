@@ -12,7 +12,6 @@ let datosArr = [];
 
 
 
-
 app.use(
     express.urlencoded({
         extended:true
@@ -45,7 +44,7 @@ app.post('/datos', async (req, res) => {
       const { data, error } = await resend.emails.send({
           from: 'Pre-Inscripciones Club Ciclon<onboarding@resend.dev>',
           to: ['agusalt2004@hotmail.com'],
-          subject: 'NUEVA PRE-INSCRIPCION',
+          subject: `${datosArr[0].nombre} NUEVA PRE-INSCRIPCION`,
           html: `<p>
           <strong>NOMBRE:</strong> ${datosArr[0].nombre}<br><br>
           <strong>APELLIDO:</strong> ${datosArr[0].apellido}<br><br>
