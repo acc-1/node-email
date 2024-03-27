@@ -2,73 +2,129 @@ import { Resend } from 'resend';
 import express from 'express';
 import cors from 'cors';
 import XlsxPopulate from 'xlsx-populate';
+import fs from 'fs';
+import path from 'path'; // Importa el módulo 'path'
+import { Pool } from 'pg';
 
+// Configurar la conexión a la base de datos utilizando las variables proporcionadas por Railway
+const pool = new Pool({
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT,
+    ssl: {
+        rejectUnauthorized: false // Deshabilitar la verificación del certificado SSL
+    }
+});
+
+// Ejemplo de consulta a la base de datos
+pool.query('SELECT NOW()', (err, res) => {
+    if (err) {
+        console.error('Error al ejecutar la consulta:', err);
+    } else {
+        console.log('Resultado de la consulta:', res.rows[0]);
+    }
+});
 const app = express();
 const port = 3000;
 
-async function main(datos) {
-    try {
-        const workbook = await XlsxPopulate.fromBlankAsync();
-        const sheet = workbook.sheet(0);
+let datosArr = [];
+const directorioAlmacenamiento = './excels';
+const salidaXLSXPath = `${os.tmpdir()}/salida.xlsx`; // Usa el directorio temporal del sistema
+let datosCompletos = [];
+let salidaXLSXContent;
 
-        // Agrega el contenido al libro de Excel
-        // (código para agregar datos omitido para mayor brevedad)
+async function main() {
+    const workbook = await XlsxPopulate.fromBlankAsync();
+    workbook.sheet(0).cell('A1').value('NOMBRE');
+    workbook.sheet(0).cell('B1').value('APELLIDO');
+    workbook.sheet(0).cell('C1').value('SEXO');
+    workbook.sheet(0).cell('D1').value('FECHA DE NACIMIENTO');
+    workbook.sheet(0).cell('E1').value('DOCUMENTO');
+    workbook.sheet(0).cell('F1').value('CIUDAD');
+    workbook.sheet(0).cell('G1').value('DOMICILIO');
+    workbook.sheet(0).cell('H1').value('EDAD');
+    workbook.sheet(0).cell('I1').value('TIPO DE CARRERA');
+    workbook.sheet(0).cell('J1').value('TELEFONO');
+    workbook.sheet(0).cell('K1').value('EMAIL');
+    workbook.sheet(0).cell('L1').value('PAGO');
 
-        // Convierte el libro de Excel a un buffer
-        const buffer = await workbook.outputAsync();
+    datosCompletos.forEach((datos, index) => {
+        const rowIndex = index + 2;
+        workbook.sheet(0).cell(`A${rowIndex}`).value(datos.nombre);
+        workbook.sheet(0).cell(`B${rowIndex}`).value(datos.apellido);
+        workbook.sheet(0).cell(`C${rowIndex}`).value(datos.sexo);
+        workbook.sheet(0).cell(`D${rowIndex}`).value(datos.fecha_nacimiento);
+        workbook.sheet(0).cell(`E${rowIndex}`).value(datos.documento);
+        workbook.sheet(0).cell(`F${rowIndex}`).value(datos.ciudad);
+        workbook.sheet(0).cell(`G${rowIndex}`).value(datos.domicilio);
+        workbook.sheet(0).cell(`H${rowIndex}`).value(datos.edad);
+        workbook.sheet(0).cell(`I${rowIndex}`).value(datos.carrera);
+        workbook.sheet(0).cell(`J${rowIndex}`).value(datos.telefono);
+        workbook.sheet(0).cell(`K${rowIndex}`).value(datos.email);
+    });
 
-        return buffer;
-    } catch (error) {
-        throw new Error(`Error en la función main(): ${error.message}`);
-    }
+    await workbook.toFileAsync(salidaXLSXPath);
+    salidaXLSXContent = fs.readFileSync(salidaXLSXPath);
 }
 
-app.use(express.urlencoded({ extended: true }));
-app.use(express.json({ type: "*/*" }));
+app.use(
+    express.urlencoded({
+        extended: true
+    })
+)
+
+app.use(express.json({
+    type: "*/*"
+}))
+
 app.use(cors({
     origin: ['https://inscripciones-club-ciclon.netlify.app', 'https://inscripciones-club-ciclon.netlify.app/home']
 }));
 
 app.get('/', (req, res) => {
-    res.send('Funciona correctamente');
-});
+    res.send('funciona correctamente');
+})
 
 app.post('/datos', async (req, res) => {
     let datos = req.body;
+    datosArr = [datos];
+    datosCompletos.push(datos)
+    await main();
+    const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
 
     try {
-        const excelBuffer = await main(datos);
-        const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
-
         const { data, error } = await resend.emails.send({
             from: 'Pre-Inscripciones Club Ciclon<onboarding@resend.dev>',
             to: ['agusalt2004@hotmail.com'],
-            subject: `${datos.nombre} NUEVA PRE-INSCRIPCION`,
+            subject: `${datosArr[0].nombre} NUEVA PRE-INSCRIPCION`,
             html: `<p>
-                <strong>NOMBRE:</strong> ${datos.nombre}<br><br>
-                <strong>APELLIDO:</strong> ${datos.apellido}<br><br>
-                <strong>SEXO:</strong> ${datos.sexo}<br><br>
-                <strong>FECHA DE NACIMIENTO:</strong> ${datos.fecha_nacimiento}<br><br>
-                <strong>DOCUMENTO:</strong> ${datos.documento}<br><br>
-                <strong>CIUDAD:</strong> ${datos.ciudad}<br><br>
-                <strong>DOMICILIO:</strong> ${datos.domicilio}<br><br>
-                <strong>EDAD:</strong> ${datos.edad}<br><br>
-                <strong>TIPO DE CARRERA:</strong> ${datos.carrera}<br><br>
-                <strong>TELEFONO:</strong> ${datos.telefono}<br><br>
-                <strong>EMAIL:</strong> ${datos.email}<br><br>
+            <strong>NOMBRE:</strong> ${datosArr[0].nombre}<br><br>
+            <strong>APELLIDO:</strong> ${datosArr[0].apellido}<br><br>
+            <strong>SEXO:</strong> ${datosArr[0].sexo}<br><br>
+            <strong>FECHA DE NACIMIENTO:</strong> ${datosArr[0].fecha_nacimiento}<br><br>
+            <strong>DOCUMENTO:</strong> ${datosArr[0].documento}<br><br>
+            <strong>CIUDAD:</strong> ${datosArr[0].ciudad}<br><br>
+            <strong>DOMICILIO:</strong> ${datosArr[0].domicilio}<br><br>
+            <strong>EDAD:</strong> ${datosArr[0].edad}<br><br>
+            <strong>TIPO DE CARRERA:</strong> ${datosArr[0].carrera}<br><br>
+            <strong>TELEFONO:</strong> ${datosArr[0].telefono}<br><br>
+            <strong>EMAIL:</strong> ${datosArr[0].email}<br><br>
             </p>`,
             attachments: [
                 {
                     filename: 'pre-inscripciones-Club-Ciclon.xlsx',
-                    content: excelBuffer,
+                    content: salidaXLSXContent,
                 },
             ],
         });
 
         if (error) {
             console.error({ error });
-            res.status(500).send('Error al enviar el correo electrónico.');
+            res.status(500).send('Error  al enviar el correo electrónico.');
         } else {
+            await main();
             console.log('Correo electrónico enviado correctamente:', data);
             res.send(); // Envía una respuesta vacía
         }
@@ -79,5 +135,5 @@ app.post('/datos', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`Estoy ejecutándome en http://localhost:${port}`);
-});
+    console.log(`estoy ejecutandome en http://localhost:${port}`)
+})
