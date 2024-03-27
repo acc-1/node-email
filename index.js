@@ -8,11 +8,11 @@ const port = 3000
 
 let datosArr = [];
 const salidaXLSXPath = './salida.xlsx';
-
+let salidaXLSXContent;
 let datosCompletos = [];
 // #region
 async function main() {
-    const salidaXLSXContent = fs.readFileSync(salidaXLSXPath);
+    salidaXLSXContent = fs.readFileSync(salidaXLSXPath);
     const workbook = await XlsxPopulate.fromBlankAsync();
     workbook.sheet(0).cell('A1').value('NOMBRE');
     workbook.sheet(0).cell('B1').value('APELLIDO');
