@@ -58,8 +58,10 @@ app.use(express.json({
 }))
 
 app.use(cors({
-  origin: ['https://inscripciones-club-ciclon.netlify.app', 'https://inscripciones-club-ciclon.netlify.app/home']
-}));
+    origin: 'https://inscripciones-club-ciclon.netlify.app',
+    methods: ['GET', 'POST'], // Agrega los métodos que necesites permitir
+    credentials: true // Habilita el envío de cookies u otros datos de autenticación en la solicitud
+  }));
 // #endregion
 
 
