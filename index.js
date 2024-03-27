@@ -46,7 +46,7 @@ async function main() {
     await workbook.toFileAsync(salidaXLSXPath);
 }
 
-
+main()
 app.use(
     express.urlencoded({
         extended:true
