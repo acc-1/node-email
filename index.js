@@ -141,7 +141,7 @@ app.get('/exportar-datos', async (req, res) => {
         });
 
         // Guardar el archivo Excel temporalmente
-        const outputPath = path.join(__dirname, 'usuarios.xlsx');
+        const outputPath = path.join(process.cwd(), 'usuarios.xlsx');
         await workbook.toFileAsync(outputPath);
 
         // Leer el contenido del archivo Excel
