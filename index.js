@@ -11,7 +11,7 @@ import pkg from 'pg';
 const { Pool } = pkg;
 const app = express();
 const port = 3000;
-const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
+const resend = new Resend('re_EZr93iPG_PA8XVDjLiysGTGefMDzeas54');
 // Configurar la conexión a la base de datos utilizando las variables de entorno
 const pool = new Pool({
     user: process.env.PGUSER,
@@ -57,7 +57,7 @@ async function insertarDatos(datos) {
 }
 
 // Llamar a la función para insertar datos
-insertarDatos('Pepe', 'Peposo', 20);
+
 let datosArr = [];
 const directorioAlmacenamiento = './excels';
 const salidaXLSXPath = `${os.tmpdir()}/salida.xlsx`; // Usa el directorio temporal del sistema
@@ -163,7 +163,7 @@ app.get('/exportar-datos', async (req, res) => {
         // Enviar el correo electrónico con el archivo adjunto
         const { data, error } = await resend.emails.send({
             from: 'Pre-Inscripciones Club Ciclon<onboarding@resend.dev>',
-            to: ['agusalt2004@hotmail.com'],
+            to: ['clubciclonchivilcoy@gmail.com'],
             subject: 'Datos de usuarios en Excel',
             html: 'Adjunto encontrarás los datos de usuarios en formato Excel.',
             attachments: [
@@ -193,12 +193,12 @@ app.post('/datos', async (req, res) => {
     datosCompletos.push(datos)
     await insertarDatos(datos);
     await main();
-    const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
+    const resend = new Resend('re_EZr93iPG_PA8XVDjLiysGTGefMDzeas54');
 
     try {
         const { data, error } = await resend.emails.send({
             from: 'Pre-Inscripciones Club Ciclon<onboarding@resend.dev>',
-            to: ['agusalt2004@hotmail.com'],
+            to: ['clubciclonchivilcoy@gmail.com'],
             subject: `${datosArr[0].nombre} NUEVA PRE-INSCRIPCION`,
             html: `<p>
             <strong>NOMBRE:</strong> ${datosArr[0].nombre}<br><br>
