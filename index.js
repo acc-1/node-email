@@ -11,6 +11,7 @@ import pkg from 'pg';
 const { Pool } = pkg;
 const app = express();
 const port = 3000;
+const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
 // Configurar la conexión a la base de datos utilizando las variables de entorno
 const pool = new Pool({
     user: process.env.PGUSER,
