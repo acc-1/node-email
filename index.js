@@ -117,6 +117,62 @@ app.use(cors({
 app.get('/', (req, res) => {
     res.send('funciona correctamente');
 })
+app.get('/exportar-datos', async (req, res) => {
+    try {
+        // Consulta SQL para seleccionar todos los datos de la tabla 'usuarios'
+        const query = 'SELECT * FROM usuarios';
+        
+        // Ejecutar la consulta SQL utilizando el cliente PostgreSQL
+        const result = await pool.query(query);
+
+        // Convertir los resultados de la consulta a un formato de hoja de cálculo
+        let workbook = await XlsxPopulate.fromBlankAsync();
+        let sheet = workbook.sheet(0);
+        sheet.cell('A1').value('Nombre');
+        sheet.cell('B1').value('Apellido');
+        sheet.cell('C1').value('Edad');
+
+        // Iterar sobre los resultados y escribirlos en la hoja de cálculo
+        result.rows.forEach((row, index) => {
+            const rowIndex = index + 2;
+            sheet.cell(`A${rowIndex}`).value(row.nombre);
+            sheet.cell(`B${rowIndex}`).value(row.apellido);
+            sheet.cell(`C${rowIndex}`).value(row.edad);
+        });
+
+        // Guardar el archivo Excel temporalmente
+        const outputPath = path.join(__dirname, 'usuarios.xlsx');
+        await workbook.toFileAsync(outputPath);
+
+        // Leer el contenido del archivo Excel
+        const excelContent = fs.readFileSync(outputPath);
+
+        // Enviar el correo electrónico con el archivo adjunto
+        const { data, error } = await resend.emails.send({
+            from: 'Tu Nombre <tu_correo@gmail.com>',
+            to: ['destinatario@gmail.com'],
+            subject: 'Datos de usuarios en Excel',
+            html: 'Adjunto encontrarás los datos de usuarios en formato Excel.',
+            attachments: [
+                {
+                    filename: 'usuarios.xlsx',
+                    content: excelContent,
+                },
+            ],
+        });
+
+        if (error) {
+            console.error({ error });
+            res.status(500).send('Error al enviar el correo electrónico.');
+        } else {
+            console.log('Correo electrónico enviado correctamente:', data);
+            res.send('Correo electrónico enviado correctamente');
+        }
+    } catch (error) {
+        console.error('Error al exportar datos:', error);
+        res.status(500).send('Error al exportar datos.');
+    }
+});
 
 app.post('/datos', async (req, res) => {
     let datos = req.body;

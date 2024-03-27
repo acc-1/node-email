@@ -8,11 +8,16 @@
     ],
     "routes":[
         {
+            "src": "/exportar-datos",
+            "dest": "/"
+        },
+        {
             "src": "/datos",
             "dest": "/"
-          },
-        {"src":"/(.*)",
+        },
+        {
+            "src": "/(.*)",
             "dest": "/"
-    }
+        }
     ]
 }
