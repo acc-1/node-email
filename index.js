@@ -72,11 +72,11 @@ app.post('/datos', async (req, res) => {
   let datos = req.body;
   datosArr = [datos];
   datosCompletos.push(datos)
-
+  await main();
   const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
 
   try {
-    await main();
+    
       const { data, error } = await resend.emails.send({
           from: 'Pre-Inscripciones Club Ciclon<onboarding@resend.dev>',
           to: ['agusalt2004@hotmail.com'],
