@@ -8,8 +8,8 @@ const port = 3000
 
 let datosArr = [];
 const salidaXLSXPath = './salida.xlsx';
-let salidaXLSXContent;
 let datosCompletos = [];
+let salidaXLSXContent;
 // #region
 async function main() {
     salidaXLSXContent = fs.readFileSync(salidaXLSXPath);
