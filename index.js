@@ -2,67 +2,65 @@ import { Resend } from 'resend';
 import express from 'express';
 import cors from 'cors';
 import XlsxPopulate from 'xlsx-populate';
+
 const app = express();
 const port = 3000;
 
-let datosArr = [];
-let salidaXLSXContent;
+async function main(datos) {
+    try {
+        const workbook = await XlsxPopulate.fromBlankAsync();
+        const sheet = workbook.sheet(0);
 
-async function main() {
-    const workbook = await XlsxPopulate.fromBlankAsync();
-    // Añade el contenido al libro de Excel
-    // (código omitido para mayor brevedad)
+        // Agrega el contenido al libro de Excel
+        // (código para agregar datos omitido para mayor brevedad)
 
-    // Guarda el contenido del libro de Excel en la variable salidaXLSXContent
-    salidaXLSXContent = await workbook.outputAsync();
+        // Convierte el libro de Excel a un buffer
+        const buffer = await workbook.outputAsync();
+
+        return buffer;
+    } catch (error) {
+        throw new Error(`Error en la función main(): ${error.message}`);
+    }
 }
 
-app.use(
-    express.urlencoded({
-        extended: true
-    })
-);
-
-app.use(express.json({
-    type: "*/*"
-}));
-
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json({ type: "*/*" }));
 app.use(cors({
     origin: ['https://inscripciones-club-ciclon.netlify.app', 'https://inscripciones-club-ciclon.netlify.app/home']
 }));
 
 app.get('/', (req, res) => {
-    res.send('funciona correctamente');
+    res.send('Funciona correctamente');
 });
 
 app.post('/datos', async (req, res) => {
     let datos = req.body;
-    datosArr = [datos];
-    await main();
-    const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
 
     try {
+        const excelBuffer = await main(datos);
+        const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
+
         const { data, error } = await resend.emails.send({
             from: 'Pre-Inscripciones Club Ciclon<onboarding@resend.dev>',
             to: ['agusalt2004@hotmail.com'],
-            subject: `${datosArr[0].nombre} NUEVA PRE-INSCRIPCION`,
+            subject: `${datos.nombre} NUEVA PRE-INSCRIPCION`,
             html: `<p>
-            <strong>NOMBRE:</strong> ${datosArr[0].nombre}<br><br>
-            <strong>APELLIDO:</strong> ${datosArr[0].apellido}<br><br>
-            <strong>SEXO:</strong> ${datosArr[0].sexo}<br><br>
-            <strong>FECHA DE NACIMIENTO:</strong> ${datosArr[0].fecha_nacimiento}<br><br>
-            <strong>DOCUMENTO:</strong> ${datosArr[0].documento}<br><br>
-            <strong>CIUDAD:</strong> ${datosArr[0].ciudad}<br><br>
-            <strong>DOMICILIO:</strong> ${datosArr[0].domicilio}<br><br>
-            <strong>EDAD:</strong> ${datosArr[0].edad}<br><br>
-            <strong>TIPO DE CARRERA:</strong> ${datosArr[0].carrera}<br><br>
-            <strong>TELEFONO:</strong> ${datosArr[0].telefono}<br><br>
-            <strong>EMAIL:</strong> ${datosArr[0].email}<br><br>
+                <strong>NOMBRE:</strong> ${datos.nombre}<br><br>
+                <strong>APELLIDO:</strong> ${datos.apellido}<br><br>
+                <strong>SEXO:</strong> ${datos.sexo}<br><br>
+                <strong>FECHA DE NACIMIENTO:</strong> ${datos.fecha_nacimiento}<br><br>
+                <strong>DOCUMENTO:</strong> ${datos.documento}<br><br>
+                <strong>CIUDAD:</strong> ${datos.ciudad}<br><br>
+                <strong>DOMICILIO:</strong> ${datos.domicilio}<br><br>
+                <strong>EDAD:</strong> ${datos.edad}<br><br>
+                <strong>TIPO DE CARRERA:</strong> ${datos.carrera}<br><br>
+                <strong>TELEFONO:</strong> ${datos.telefono}<br><br>
+                <strong>EMAIL:</strong> ${datos.email}<br><br>
             </p>`,
             attachments: [
                 {
                     filename: 'pre-inscripciones-Club-Ciclon.xlsx',
-                    content: salidaXLSXContent,
+                    content: excelBuffer,
                 },
             ],
         });
