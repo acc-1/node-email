@@ -3,13 +3,13 @@ import express from 'express';
 import cors from 'cors';
 import XlsxPopulate from 'xlsx-populate';
 import fs from 'fs';
-import path from 'path'; // Importa el módulo 'path'
+import os from 'os'; // Importa el módulo 'os'
+
 const app = express();
 const port = 3000;
 
 let datosArr = [];
-const directorioAlmacenamiento = 'api\\excels';
-const salidaXLSXPath = path.join(directorioAlmacenamiento, './salida.xlsx'); // Ruta completa del archivo salida.xlsx
+const salidaXLSXPath = `${os.tmpdir()}/salida.xlsx`; // Usa el directorio temporal del sistema
 let datosCompletos = [];
 let salidaXLSXContent;
 
