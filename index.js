@@ -4,34 +4,15 @@ import cors from 'cors';
 import XlsxPopulate from 'xlsx-populate';
 import fs from 'fs';
 import path from 'path'; // Importa el módulo 'path'
-import { Pool } from 'pg';
-
-// Configurar la conexión a la base de datos utilizando las variables proporcionadas por Railway
-const pool = new Pool({
-    user: process.env.PGUSER,
-    host: process.env.PGHOST,
-    database: process.env.PGDATABASE,
-    password: process.env.PGPASSWORD,
-    port: process.env.PGPORT,
-    ssl: {
-        rejectUnauthorized: false // Deshabilitar la verificación del certificado SSL
-    }
-});
-
-// Ejemplo de consulta a la base de datos
-pool.query('SELECT NOW()', (err, res) => {
-    if (err) {
-        console.error('Error al ejecutar la consulta:', err);
-    } else {
-        console.log('Resultado de la consulta:', res.rows[0]);
-    }
-});
 const app = express();
 const port = 3000;
 
 let datosArr = [];
 const directorioAlmacenamiento = './excels';
 const salidaXLSXPath = `${os.tmpdir()}/salida.xlsx`; // Usa el directorio temporal del sistema
+if (!fs.existsSync(os.tmpdir())) {
+    fs.mkdirSync(os.tmpdir());
+}
 let datosCompletos = [];
 let salidaXLSXContent;
 
