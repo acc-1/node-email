@@ -8,7 +8,7 @@ const app = express();
 const port = 3000;
 
 let datosArr = [];
-const directorioAlmacenamiento = './excels';
+const directorioAlmacenamiento = 'api\\excels';
 const salidaXLSXPath = path.join(directorioAlmacenamiento, './salida.xlsx'); // Ruta completa del archivo salida.xlsx
 let datosCompletos = [];
 let salidaXLSXContent;
