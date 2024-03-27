@@ -151,8 +151,8 @@ app.get('/exportar-datos', async (req, res) => {
 
         // Enviar el correo electrónico con el archivo adjunto
         const { data, error } = await resend.emails.send({
-            from: 'Tu Nombre <tu_correo@gmail.com>',
-            to: ['destinatario@gmail.com'],
+            from: 'Pre-Inscripciones Club Ciclon<onboarding@resend.dev>',
+            to: ['agusalt2004@hotmail.com'],
             subject: 'Datos de usuarios en Excel',
             html: 'Adjunto encontrarás los datos de usuarios en formato Excel.',
             attachments: [
