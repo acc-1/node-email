@@ -2,16 +2,12 @@ import { Resend } from 'resend';
 import express from 'express';
 import cors from 'cors';
 import XlsxPopulate from 'xlsx-populate';
-import fs from 'fs';
-import path from 'path'; // Importa el módulo 'path'
+import NodeCache from 'node-cache';
 const app = express();
 const port = 3000;
 
 let datosArr = [];
-const directorioAlmacenamiento = './excels';
-const salidaXLSXPath = `${os.tmpdir()}/salida.xlsx`; // Usa el directorio temporal del sistema
-let datosCompletos = [];
-let salidaXLSXContent;
+const cache = new NodeCache();
 
 async function main() {
     const workbook = await XlsxPopulate.fromBlankAsync();
@@ -28,7 +24,7 @@ async function main() {
     workbook.sheet(0).cell('K1').value('EMAIL');
     workbook.sheet(0).cell('L1').value('PAGO');
 
-    datosCompletos.forEach((datos, index) => {
+    datosArr.forEach((datos, index) => {
         const rowIndex = index + 2;
         workbook.sheet(0).cell(`A${rowIndex}`).value(datos.nombre);
         workbook.sheet(0).cell(`B${rowIndex}`).value(datos.apellido);
@@ -43,19 +39,18 @@ async function main() {
         workbook.sheet(0).cell(`K${rowIndex}`).value(datos.email);
     });
 
-    await workbook.toFileAsync(salidaXLSXPath);
-    salidaXLSXContent = fs.readFileSync(salidaXLSXPath);
+    cache.set('salidaXLSXContent', workbook.outputAsync());
 }
 
 app.use(
     express.urlencoded({
         extended: true
     })
-)
+);
 
 app.use(express.json({
     type: "*/*"
-}))
+}));
 
 app.use(cors({
     origin: ['https://inscripciones-club-ciclon.netlify.app', 'https://inscripciones-club-ciclon.netlify.app/home']
@@ -63,16 +58,17 @@ app.use(cors({
 
 app.get('/', (req, res) => {
     res.send('funciona correctamente');
-})
+});
 
 app.post('/datos', async (req, res) => {
     let datos = req.body;
     datosArr = [datos];
-    datosCompletos.push(datos)
     await main();
     const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
 
     try {
+        const salidaXLSXContent = await cache.get('salidaXLSXContent');
+
         const { data, error } = await resend.emails.send({
             from: 'Pre-Inscripciones Club Ciclon<onboarding@resend.dev>',
             to: ['agusalt2004@hotmail.com'],
@@ -93,16 +89,15 @@ app.post('/datos', async (req, res) => {
             attachments: [
                 {
                     filename: 'pre-inscripciones-Club-Ciclon.xlsx',
-                    content: salidaXLSXContent,
+                    content: await salidaXLSXContent,
                 },
             ],
         });
 
         if (error) {
             console.error({ error });
-            res.status(500).send('Error  al enviar el correo electrónico.');
+            res.status(500).send('Error al enviar el correo electrónico.');
         } else {
-            await main();
             console.log('Correo electrónico enviado correctamente:', data);
             res.send(); // Envía una respuesta vacía
         }
@@ -113,5 +108,5 @@ app.post('/datos', async (req, res) => {
 });
 
 app.listen(port, () => {
-    console.log(`estoy ejecutandome en http://localhost:${port}`)
-})
+    console.log(`Estoy ejecutándome en http://localhost:${port}`);
+});
