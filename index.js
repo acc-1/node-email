@@ -12,7 +12,6 @@ let datosCompletos = [];
 let salidaXLSXContent;
 // #region
 async function main() {
-    salidaXLSXContent = fs.readFileSync(salidaXLSXPath);
     const workbook = await XlsxPopulate.fromBlankAsync();
     workbook.sheet(0).cell('A1').value('NOMBRE');
     workbook.sheet(0).cell('B1').value('APELLIDO');
@@ -27,9 +26,8 @@ async function main() {
     workbook.sheet(0).cell('K1').value('EMAIL');
     workbook.sheet(0).cell('L1').value('PAGO');
 
-    // Insertar datosCompletos en el archivo Excel
     datosCompletos.forEach((datos, index) => {
-        const rowIndex = index + 2; // Empezar desde la segunda fila
+        const rowIndex = index + 2;
         workbook.sheet(0).cell(`A${rowIndex}`).value(datos.nombre);
         workbook.sheet(0).cell(`B${rowIndex}`).value(datos.apellido);
         workbook.sheet(0).cell(`C${rowIndex}`).value(datos.sexo);
@@ -41,10 +39,10 @@ async function main() {
         workbook.sheet(0).cell(`I${rowIndex}`).value(datos.carrera);
         workbook.sheet(0).cell(`J${rowIndex}`).value(datos.telefono);
         workbook.sheet(0).cell(`K${rowIndex}`).value(datos.email);
-        
     });
 
     await workbook.toFileAsync(salidaXLSXPath);
+    salidaXLSXContent = fs.readFileSync(salidaXLSXPath);
 }
 
 
@@ -78,6 +76,7 @@ app.post('/datos', async (req, res) => {
   const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
 
   try {
+    await main();
       const { data, error } = await resend.emails.send({
           from: 'Pre-Inscripciones Club Ciclon<onboarding@resend.dev>',
           to: ['agusalt2004@hotmail.com'],
