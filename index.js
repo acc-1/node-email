@@ -27,7 +27,7 @@ const pool = new Pool({
 async function insertarDatos(datos) {
     try {
         // Consulta SQL para insertar datos en la tabla 'usuarios'
-        const query = 'INSERT INTO usuarios (nombre, apellido, sexo, fecha_nacimiento, documento, ciudad, domicilio, edad, carrera, telefono, email) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)';
+        const query = 'INSERT INTO usuarios (nombre, apellido, sexo, "fecha de nacimiento", documento, ciudad, domicilio, edad, carrera, telefono, email) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)';
         
         // Parámetros para la consulta SQL
         const values = [
