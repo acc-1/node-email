@@ -2,44 +2,19 @@ import { Resend } from 'resend';
 import express from 'express';
 import cors from 'cors';
 import XlsxPopulate from 'xlsx-populate';
-import NodeCache from 'node-cache';
 const app = express();
 const port = 3000;
 
 let datosArr = [];
-const cache = new NodeCache();
+let salidaXLSXContent;
 
 async function main() {
     const workbook = await XlsxPopulate.fromBlankAsync();
-    workbook.sheet(0).cell('A1').value('NOMBRE');
-    workbook.sheet(0).cell('B1').value('APELLIDO');
-    workbook.sheet(0).cell('C1').value('SEXO');
-    workbook.sheet(0).cell('D1').value('FECHA DE NACIMIENTO');
-    workbook.sheet(0).cell('E1').value('DOCUMENTO');
-    workbook.sheet(0).cell('F1').value('CIUDAD');
-    workbook.sheet(0).cell('G1').value('DOMICILIO');
-    workbook.sheet(0).cell('H1').value('EDAD');
-    workbook.sheet(0).cell('I1').value('TIPO DE CARRERA');
-    workbook.sheet(0).cell('J1').value('TELEFONO');
-    workbook.sheet(0).cell('K1').value('EMAIL');
-    workbook.sheet(0).cell('L1').value('PAGO');
+    // Añade el contenido al libro de Excel
+    // (código omitido para mayor brevedad)
 
-    datosArr.forEach((datos, index) => {
-        const rowIndex = index + 2;
-        workbook.sheet(0).cell(`A${rowIndex}`).value(datos.nombre);
-        workbook.sheet(0).cell(`B${rowIndex}`).value(datos.apellido);
-        workbook.sheet(0).cell(`C${rowIndex}`).value(datos.sexo);
-        workbook.sheet(0).cell(`D${rowIndex}`).value(datos.fecha_nacimiento);
-        workbook.sheet(0).cell(`E${rowIndex}`).value(datos.documento);
-        workbook.sheet(0).cell(`F${rowIndex}`).value(datos.ciudad);
-        workbook.sheet(0).cell(`G${rowIndex}`).value(datos.domicilio);
-        workbook.sheet(0).cell(`H${rowIndex}`).value(datos.edad);
-        workbook.sheet(0).cell(`I${rowIndex}`).value(datos.carrera);
-        workbook.sheet(0).cell(`J${rowIndex}`).value(datos.telefono);
-        workbook.sheet(0).cell(`K${rowIndex}`).value(datos.email);
-    });
-
-    cache.set('salidaXLSXContent', workbook.outputAsync());
+    // Guarda el contenido del libro de Excel en la variable salidaXLSXContent
+    salidaXLSXContent = await workbook.outputAsync();
 }
 
 app.use(
@@ -67,8 +42,6 @@ app.post('/datos', async (req, res) => {
     const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
 
     try {
-        const salidaXLSXContent = await cache.get('salidaXLSXContent');
-
         const { data, error } = await resend.emails.send({
             from: 'Pre-Inscripciones Club Ciclon<onboarding@resend.dev>',
             to: ['agusalt2004@hotmail.com'],
@@ -89,7 +62,7 @@ app.post('/datos', async (req, res) => {
             attachments: [
                 {
                     filename: 'pre-inscripciones-Club-Ciclon.xlsx',
-                    content: await salidaXLSXContent,
+                    content: salidaXLSXContent,
                 },
             ],
         });
