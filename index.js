@@ -129,16 +129,22 @@ app.get('/exportar-datos', async (req, res) => {
         // Convertir los resultados de la consulta a un formato de hoja de cálculo
         let workbook = await XlsxPopulate.fromBlankAsync();
         let sheet = workbook.sheet(0);
-        sheet.cell('A1').value('Nombre');
-        sheet.cell('B1').value('Apellido');
-        sheet.cell('C1').value('Edad');
+    workbook.sheet(0).cell('A1').value('NOMBRE');
+    workbook.sheet(0).cell('B1').value('APELLIDO');
+    workbook.sheet(0).cell('C1').value('EDAD');
+    workbook.sheet(0).cell('D1').value('SEXO');
+    workbook.sheet(0).cell('E1').value('FECHA DE NACIMIENTO');
+    workbook.sheet(0).cell('F1').value('DOCUMENTO');
+    workbook.sheet(0).cell('G1').value('CIUDAD');
+    workbook.sheet(0).cell('H1').value('DOMICILIO');
+    workbook.sheet(0).cell('I1').value('TIPO DE CARRERA');
+    workbook.sheet(0).cell('J1').value('TELEFONO');
+    workbook.sheet(0).cell('K1').value('EMAIL');
+    workbook.sheet(0).cell('L1').value('PAGO');
 
         // Iterar sobre los resultados y escribirlos en la hoja de cálculo
         result.rows.forEach((row, index) => {
             const rowIndex = index + 2;
-            sheet.cell(`A${rowIndex}`).value(row.nombre);
-            sheet.cell(`B${rowIndex}`).value(row.apellido);
-            sheet.cell(`C${rowIndex}`).value(row.edad);
             sheet.cell(`A${rowIndex}`).value(row.nombre);
             sheet.cell(`B${rowIndex}`).value(row.apellido);
             sheet.cell(`C${rowIndex}`).value(row.edad);
