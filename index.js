@@ -4,6 +4,7 @@ import cors from 'cors';
 import XlsxPopulate from 'xlsx-populate';
 import fs from 'fs';
 import path from 'path'; // Importa el módulo 'path'
+import os from 'os'; // Importa el módulo 'os'
 const app = express();
 const port = 3000;
 
