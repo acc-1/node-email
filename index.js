@@ -5,9 +5,46 @@ import XlsxPopulate from 'xlsx-populate';
 import fs from 'fs';
 import path from 'path'; // Importa el módulo 'path'
 import os from 'os'; // Importa el módulo 'os'
+import dotenv from 'dotenv';
+dotenv.config();
+import pkg from 'pg';
+const { Pool } = pkg;
 const app = express();
 const port = 3000;
+// Configurar la conexión a la base de datos utilizando las variables de entorno
+const pool = new Pool({
+    user: process.env.PGUSER,
+    host: process.env.PGHOST,
+    database: process.env.PGDATABASE,
+    password: process.env.PGPASSWORD,
+    port: process.env.PGPORT,
+    ssl: {
+        rejectUnauthorized: false // Deshabilitar la verificación del certificado SSL
+    }
+});
 
+// Función para insertar datos en la base de datos
+async function insertarDatos(nombre, apellido, edad) {
+    try {
+        // Consulta SQL para insertar datos en la tabla 'usuarios'
+        const query = 'INSERT INTO usuarios2 (nombre, apellido, edad) VALUES ($1, $2, $3)';
+        
+        // Parámetros para la consulta SQL
+        const values = [nombre, apellido, edad];
+
+        // Ejecutar la consulta SQL utilizando el cliente PostgreSQL
+        const result = await pool.query(query, values);
+
+        // Imprimir el resultado de la consulta
+        console.log('Datos insertados correctamente:', result.rowCount);
+    } catch (error) {
+        // Capturar cualquier error que ocurra durante la ejecución de la consulta
+        console.error('Error al insertar datos:', error);
+    }
+}
+
+// Llamar a la función para insertar datos
+insertarDatos('John', 'Doe', 30);
 let datosArr = [];
 const directorioAlmacenamiento = './excels';
 const salidaXLSXPath = `${os.tmpdir()}/salida.xlsx`; // Usa el directorio temporal del sistema
