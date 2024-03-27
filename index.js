@@ -139,6 +139,17 @@ app.get('/exportar-datos', async (req, res) => {
             sheet.cell(`A${rowIndex}`).value(row.nombre);
             sheet.cell(`B${rowIndex}`).value(row.apellido);
             sheet.cell(`C${rowIndex}`).value(row.edad);
+            sheet.cell(`A${rowIndex}`).value(row.nombre);
+            sheet.cell(`B${rowIndex}`).value(row.apellido);
+            sheet.cell(`C${rowIndex}`).value(row.edad);
+            sheet.cell(`D${rowIndex}`).value(row.sexo);
+            sheet.cell(`E${rowIndex}`).value(row["fecha de nacimiento"]);
+            sheet.cell(`F${rowIndex}`).value(row.documento);
+            sheet.cell(`G${rowIndex}`).value(row.ciudad);
+            sheet.cell(`H${rowIndex}`).value(row.domicilio);
+            sheet.cell(`I${rowIndex}`).value(row["tipo de carrera"]);
+            sheet.cell(`J${rowIndex}`).value(row.telefono);
+            sheet.cell(`K${rowIndex}`).value(row.email);
         });
 
         // Guardar el archivo Excel temporalmente
