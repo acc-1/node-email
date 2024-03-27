@@ -24,13 +24,25 @@ const pool = new Pool({
 });
 
 // Función para insertar datos en la base de datos
-async function insertarDatos(nombre, apellido, edad) {
+async function insertarDatos(datos) {
     try {
         // Consulta SQL para insertar datos en la tabla 'usuarios'
-        const query = 'INSERT INTO usuarios2 (nombre, apellido, edad) VALUES ($1, $2, $3)';
+        const query = 'INSERT INTO usuarios (nombre, apellido, sexo, fecha_nacimiento, documento, ciudad, domicilio, edad, carrera, telefono, email) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11)';
         
         // Parámetros para la consulta SQL
-        const values = [nombre, apellido, edad];
+        const values = [
+            datos.nombre,
+            datos.apellido,
+            datos.sexo,
+            datos.fecha_nacimiento,
+            datos.documento,
+            datos.ciudad,
+            datos.domicilio,
+            datos.edad,
+            datos.carrera,
+            datos.telefono,
+            datos.email
+        ];
 
         // Ejecutar la consulta SQL utilizando el cliente PostgreSQL
         const result = await pool.query(query, values);
@@ -44,7 +56,7 @@ async function insertarDatos(nombre, apellido, edad) {
 }
 
 // Llamar a la función para insertar datos
-insertarDatos('John', 'Doe', 30);
+insertarDatos('Pepe', 'Peposo', 20);
 let datosArr = [];
 const directorioAlmacenamiento = './excels';
 const salidaXLSXPath = `${os.tmpdir()}/salida.xlsx`; // Usa el directorio temporal del sistema
@@ -110,6 +122,7 @@ app.post('/datos', async (req, res) => {
     let datos = req.body;
     datosArr = [datos];
     datosCompletos.push(datos)
+    await insertarDatos(datos);
     await main();
     const resend = new Resend('re_BESoasix_834sJRhhpnnofMrFQ1WqVWHR');
 
