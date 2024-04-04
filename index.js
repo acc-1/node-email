@@ -112,7 +112,7 @@ app.use(express.json({
 }))
 
 app.use(cors({
-    origin: ['https://inscripciones-club-ciclon.netlify.app','https://inscripciones-club-ciclon.netlify.app/enviarexcel', 'https://inscripciones-club-ciclon.netlify.app/home']
+    origin: ['https://inscripcionesclub-ciclon.netlify.app','https://inscripciones-club-ciclon.netlify.app','https://inscripciones-club-ciclon.netlify.app/enviarexcel', 'https://inscripciones-club-ciclon.netlify.app/home']
 }));
 
 app.get('/', (req, res) => {
